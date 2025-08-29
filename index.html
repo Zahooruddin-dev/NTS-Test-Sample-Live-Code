@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTS ICS Sample Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .test-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .info-item h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #ecf0f1;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            transition: width 0.3s ease;
+            border-radius: 3px;
+        }
+
+        .question-container {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .section-header {
+            background: #34495e;
+            color: white;
+            padding: 15px 25px;
+            margin: 20px -30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .question:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .question-number {
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #3498db;
+            background: #f0f7ff;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .option.selected {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+
+        .controls {
+            padding: 25px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .results {
+            display: none;
+            padding: 30px;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        .score-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .score-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .answer-key {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .answer-key h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .key-section {
+            margin-bottom: 25px;
+        }
+
+        .key-section h4 {
+            background: #34495e;
+            color: white;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .key-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .key-item {
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .key-item.correct {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .key-item.incorrect {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .start-screen {
+            padding: 50px 30px;
+            text-align: center;
+        }
+
+        .start-screen h2 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .start-screen p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .timer {
+                position: static;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>NTS ICS Sample Test</h1>
+            <p>Computer Science Group - Practice Test</p>
+        </div>
+
+        <div id="startScreen" class="start-screen">
+            <h2>Welcome to NTS ICS Sample Test</h2>
+            <p>This test contains 90 multiple choice questions covering Verbal Ability, Analytical Reasoning, Quantitative Reasoning, and Subject Knowledge (Physics, Computer, Mathematics).</p>
+            <div class="test-info">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <h3>Total Questions</h3>
+                        <p>90 Questions</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Time Duration</h3>
+                        <p>120 Minutes</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Sections</h3>
+                        <p>4 Sections</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Marking</h3>
+                        <p>+1 for correct, 0 for wrong</p>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="startTest()" style="font-size: 1.2rem; padding: 15px 40px; margin-top: 20px;">
+                Start Test
+            </button>
+        </div>
+
+        <div id="testScreen" style="display: none;">
+            <div class="timer" id="timer">120:00</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="question-container" id="questionContainer"></div>
+            <div class="controls">
+                <div>
+                    <span id="questionCounter">Question 1 of 90</span>
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="previousQuestion()" id="prevBtn">Previous</button>
+                    <button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn">Next</button>
+                    <button class="btn btn-success" onclick="submitTest()" id="submitBtn" style="display: none;">Submit Test</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultsScreen" class="results">
+            <div class="score-card" id="scoreCard">
+                <h2>Test Completed!</h2>
+                <div class="score-circle" id="scoreCircle">0%</div>
+                <div class="score-details">
+                    <div class="score-item">
+                        <h3 id="totalScore">0</h3>
+                        <p>Total Score</p>
+                    </div>
+                    <div class="score-item">
+                        <h3 id="correctAnswers">0</h3>
+                        <p>Correct Answers</p>
+                    </div>
+                    <div class="score-item">
+                        <h3 id="wrongAnswers">0</h3>
+                        <p>Wrong Answers</p>
+                    </div>
+                    <div class="score-item">
+                        <h3 id="unanswered">0</h3>
+                        <p>Unanswered</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="answer-key">
+                <h3>Answer Key</h3>
+                <div id="answerKeyContent"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="restartTest()">Take Test Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let userAnswers = {};
+        let timeLeft = 7200; // 120 minutes in seconds
+        let timerInterval;
+
+        const questions = [
+            // Verbal Ability (1-20)
+            {
+                section: "Verbal Ability",
+                number: 1,
+                text: "There are _______ views on the issue of giving bonus to the employees.",
+                options: ["Independent", "Divergent", "Modest", "Adverse"],
+                correct: 1
+            },
+            {
+                section: "Verbal Ability",
+                number: 2,
+                text: "Since she had not exercised in five years, Margarita attempt to jog five miles on her first day of cardio-training was a little ______.",
+                options: ["Pessimistic", "Irrelevant", "Quixotic", "Relieved"],
+                correct: 2
+            },
+            {
+                section: "Verbal Ability",
+                number: 3,
+                text: "More insurers are limiting the sale of property insurance in coastal areas and other regions _______ natural disasters.",
+                options: ["safe from", "according to", "despite", "prone to"],
+                correct: 3
+            },
+            {
+                section: "Verbal Ability",
+                number: 4,
+                text: "Roman Regions _______the Mountain_______of Masada for three years before they were able to seize it.",
+                options: ["dissembled, bastion", "assailed, symbol", "besieged, citadel", "honed, stronghold"],
+                correct: 2
+            },
+            {
+                section: "Verbal Ability",
+                number: 5,
+                text: "Unlike his calmer, more easygoing colleagues, the senator was ________ , ready to quarrel at the slightest provocation.",
+                options: ["whimsical", "irascible", "gregarious", "ineffectual"],
+                correct: 1
+            },
+            {
+                section: "Verbal Ability",
+                number: 6,
+                text: "HEIGHT: MOUNTAIN",
+                options: ["Depth : Trench", "Shade : Tree", "Weight : Age", "Speed : Highway"],
+                correct: 0
+            },
+            {
+                section: "Verbal Ability",
+                number: 7,
+                text: "ACT : ACTION",
+                options: ["Therapy : Thermometer", "Oblivion : Obvious", "Liturgy : Literature", "Image : Imagine"],
+                correct: 3
+            },
+            {
+                section: "Verbal Ability",
+                number: 8,
+                text: "DISTANCE:MILE",
+                options: ["liquid: liter", "bushel: corn", "weight: scale", "fame: television"],
+                correct: 0
+            },
+            {
+                section: "Verbal Ability",
+                number: 9,
+                text: "EXODUS (Choose the opposite)",
+                options: ["Influx", "Home-coming", "Return", "Restoration"],
+                correct: 0
+            },
+            {
+                section: "Verbal Ability",
+                number: 10,
+                text: "DETER (Choose the opposite)",
+                options: ["Twist", "Intimidate", "Encourage", "Straighten"],
+                correct: 2
+            },
+            {
+                section: "Verbal Ability",
+                number: 11,
+                text: "QUIZZICAL (Choose the opposite)",
+                options: ["Amused", "Unequivocal", "Contorted", "Dissimilar"],
+                correct: 1
+            },
+            {
+                section: "Verbal Ability",
+                number: 12,
+                text: "EXPAND (Choose the opposite)",
+                options: ["Convert", "Condense", "Congest", "Conclude"],
+                correct: 1
+            },
+            {
+                section: "Verbal Ability",
+                number: 13,
+                text: "CANNY (Choose the similar meaning)",
+                options: ["Obstinate", "Handsome", "Clever", "Stout"],
+                correct: 2
+            },
+            {
+                section: "Verbal Ability",
+                number: 14,
+                text: "WARRIOR (Choose the similar meaning)",
+                options: ["Soldier", "Sailor", "Pirate", "Spy"],
+                correct: 0
+            },
+            {
+                section: "Verbal Ability",
+                number: 15,
+                text: "DISTANT (Choose the similar meaning)",
+                options: ["Far", "Removed", "Reserved", "Separate"],
+                correct: 0
+            },
+            {
+                section: "Verbal Ability",
+                number: 16,
+                text: "According to the passage, our observations of nova are hampered by their extreme brightness.",
+                options: ["Loss of mass", "Speed of rotation", "Distance from Earth", "Tremendous violence"],
+                correct: 2
+            },
+            {
+                section: "Verbal Ability",
+                number: 17,
+                text: "The production of supernova",
+                options: ["occurs frequently", "occurs 25 times in 1 year", "occurred in 1946", "occurred in 1604"],
+                correct: 3
+            },
+            {
+                section: "Verbal Ability",
+                number: 18,
+                text: "By the term \"new star\" the author mean one that has recently gained in mass.",
+                options: ["moved from a distant galaxy", "become bright enough to strike the eye", "not previously risen above the horizon", "become visible by rotating in its orbit"],
+                correct: 1
+            },
+            {
+                section: "Verbal Ability",
+                number: 19,
+                text: "Which from the following statement(s) true about novae and dwarf novae",
+                options: ["I only", "II only", "III only", "I and II"],
+                correct: 1
+            },
+            {
+                section: "Verbal Ability",
+                number: 20,
+                text: "When novae and dwarf novae occur,",
+                options: ["the star survive to explode again", "the star destroys completely", "the star divides in two parts", "the star becomes a dwarf novae"],
+                correct: 0
+            },
+
+            // Analytical Reasoning (21-40)
+            {
+                section: "Analytical Reasoning",
+                number: 21,
+                text: "For the tobacco executives' argument to be logically correct, which of the following must be assumed?",
+                options: [
+                    "Substances that are not addictive are not regulated by the Federal Drug Administration.",
+                    "The tobacco executives lied when they claimed that cigarette smoking was not addictive.",
+                    "Some addictive substances are not regulated by the Federal Drug Administration.",
+                    "There is no scientific proof that cigarette smoking is addictive."
+                ],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 22,
+                text: "Which of the following is the most logical conclusion of the argument above?",
+                options: [
+                    "People should not be held accountable for the behavior of other people.",
+                    "People have control over their own behavior.",
+                    "People cannot control the behavior of other people.",
+                    "Behavior that cannot be controlled should not be punished."
+                ],
+                correct: 3
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 23,
+                text: "Which one of the following, if true, most substantially strengthens the argument above?",
+                options: [
+                    "The number of serious automobile accidents involving children under age four has remained steady over the past five years.",
+                    "Automobile accidents involving children have decreased sharply over the past five years.",
+                    "The use of air bags in automobiles has increased by 30 percent over the past five years.",
+                    "Most fatal automobile accidents involving children under age four occur in the driveway of their home."
+                ],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 24,
+                text: "How many of them occupy cottages next to a vacant cottage?",
+                options: ["2", "3", "4", "5"],
+                correct: 1
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 25,
+                text: "In the event of what occurrence would a request for a change in office be put forth?",
+                options: [
+                    "Mr. Donald quitting smoking.",
+                    "The installation of a noisy teletype machine by Miss Hardy in her office.",
+                    "Mr. Robert's needing silence in the office(s) next to her own.",
+                    "Mr. Tim taking over the duties formerly taken care of by Miss. Robert."
+                ],
+                correct: 1
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 26,
+                text: "Rita must perform only in duets if",
+                options: ["Kim is in number two", "Kim is in number five", "Tim is in number two", "Tim is in number six"],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 27,
+                text: "In case the painter works on Thursday, which among the following alternatives is possible?",
+                options: [
+                    "The painter can do his work only after the plumber and the carpenter have completed their jobs.",
+                    "The painter can do his work only after the plumber and the carpenter have completed their jobs.",
+                    "The painter can do his work only after the plumber and the carpenter have completed their jobs.",
+                    "The painter can do his work only after the plumber and the carpenter have completed their jobs."
+                ],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 28,
+                text: "In case Antonio and Jeremy share the dinner duty thrice over a five-day period, which would be true?",
+                options: [
+                    "Nicholas is on dinner duty alone on the first of the five days.",
+                    "Nicholas is on dinner duty alone on the first of the five days.",
+                    "Nicholas is on dinner duty alone on the first of the five days.",
+                    "Nicholas is on dinner duty alone on the first of the five days."
+                ],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 29,
+                text: "Which among the following is an acceptable order for showing the educational films?",
+                options: ["A, C, B, D, E", "A, C, D, E, B", "B, D, C, A, E", "B, D, E, A, C"],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 30,
+                text: "In case switch B is the only switch on in the initial setting, what must be the second setting?",
+                options: ["A on, B on, C on.", "A on, B on, C off.", "A on, B off, C on.", "A off, B off, C on."],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 31,
+                text: "In case A spoke immediately after L and immediately before O, and O was not the last speaker, L spoke",
+                options: ["Second", "Third", "Fourth", "Fifth"],
+                correct: 1
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 32,
+                text: "If J and K are chosen, which is necessarily true?",
+                options: ["I only", "II only", "III only", "II and III only"],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 33,
+                text: "An increasing number of people prefer to retain their own individuality and their own identity and consequently this has lead to a decline in the marriage rate.",
+                options: [
+                    "Very few people prefer to bring up a family.",
+                    "Emotionally divorce is not an easy procedure.",
+                    "700 couples from 1000 surveyed couples complained that they were losing their identity.",
+                    "Married people have to make a considerable effort to make the marriage last."
+                ],
+                correct: 2
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 34,
+                text: "Successfully adjusting to one's environment leads to happiness. War at a universal level destroys the weaker people...",
+                options: ["I only", "III only", "II only", "I and III only"],
+                correct: 1
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 35,
+                text: "In a one day cricket match, the total runs made by a team were 200. Out of these 160 runs were made by spinners.",
+                options: ["Only I", "Only II", "Both", "None of the Above"],
+                correct: 3
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 36,
+                text: "The Government run company had asked its employees to declare their income and assets but it has been strongly resisted by employees union and no employee is going to declare his income.",
+                options: ["Only I", "Only II", "Both", "None"],
+                correct: 1
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 37,
+                text: "The distance of 900 km by road between Bombay and Jafra will be reduced to 280 km by sea. This will lead to a saving of Rs. 7.92 crores per annum on fuel.",
+                options: ["Only I", "Only II", "Both", "None"],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 38,
+                text: "Modern man influences his destiny by the choice he makes unlike in the past.",
+                options: ["Only I", "Only II", "Both", "None"],
+                correct: 0
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 39,
+                text: "Only good singers are invited in the conference. No one without sweet voice is a good singer.",
+                options: ["Only I", "Only II", "Both", "None"],
+                correct: 2
+            },
+            {
+                section: "Analytical Reasoning",
+                number: 40,
+                text: "No country is absolutely self-dependent these days.",
+                options: ["Only I", "Only II", "Both", "None"],
+                correct: 0
+            },
+
+            // Quantitative Reasoning (41-60)
+            {
+                section: "Quantitative Reasoning",
+                number: 41,
+                text: "Three partners shared the profit in a business in the ratio 5 : 7 : 8. They had partnered for 14 months, 8 months and 7 months respectively. What was the ratio of their investments?",
+                options: ["5 : 7 : 8", "20:49:64", "38:28:21", "None"],
+                correct: 1
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 42,
+                text: "The average temperature for Wednesday, Thursday and Friday was 40°C. The average for Thursday, Friday and Saturday was 41°C. If temperature on Saturday was 42°C, what was the temperature on Wednesday?",
+                options: ["39°C", "44°C", "38°C", "41°C"],
+                correct: 0
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 43,
+                text: "Interest obtained on a sum of Rs. 5000 for 3 years is Rs. 1500. Find the rate percent.",
+                options: ["8%", "9%", "10%", "11%"],
+                correct: 2
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 44,
+                text: "Three numbers are in ratio 1:2:3 and HCF is 12. The numbers are:",
+                options: ["12,24,36", "11,22,33", "12,24,32", "5,10,15"],
+                correct: 0
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 45,
+                text: "1.14 expressed as a per cent of 1.9 is:",
+                options: ["6%", "10%", "60%", "90%"],
+                correct: 2
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 46,
+                text: "If 2/3 of A=75% of B=0.6 of C, then A:B:C is",
+                options: ["2:3:3", "3:4:5", "4:5:6", "9:8:10"],
+                correct: 3
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 47,
+                text: "A sells an article to B at a profit of 10% B sells the article back to A at a loss of 10%. In this transaction:",
+                options: ["A neither losses nor gains", "A makes a profit of 11%", "A makes a profit of 20%", "B loses 20%"],
+                correct: 1
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 48,
+                text: "The ratio between the perimeter and the breadth of a rectangle is 5 : 1. If the area of the rectangle is 216 sq. cm, what is the length of the rectangle?",
+                options: ["16 cm", "18 cm", "24 cm", "Data inadequate"],
+                correct: 1
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 49,
+                text: "What is the probability of getting a sum 9 from two throws of a dice?",
+                options: ["1/6", "1/8", "1/9", "1/12"],
+                correct: 2
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 50,
+                text: "A hall is 15 m long and 12 m broad. If the sum of the areas of the floor and the ceiling is equal to the sum of the areas of four walls, the volume of the hall is:",
+                options: ["720", "900", "1200", "1800"],
+                correct: 2
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 51,
+                text: "(-10)×(-100)=_______?",
+                options: ["-100", "-1000", "-10000", "1000"],
+                correct: 3
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 52,
+                text: "(-5)×(-4)×(-3)?",
+                options: ["60", "180", "-60", "120"],
+                correct: 2
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 53,
+                text: "Write the fraction of 5%.",
+                options: ["1/10", "1/20", "1/25", "1/30"],
+                correct: 1
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 54,
+                text: "Simplify 15ax²⁄5x",
+                options: ["3ax²", "3ax", "5ax²", "5ax"],
+                correct: 1
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 55,
+                text: "Simplify 5⁄2 ÷ 1⁄x",
+                options: ["5x⁄2", "5⁄2x", "2⁄5x", "2x⁄5"],
+                correct: 0
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 56,
+                text: "Simplify a(c - b) - b(a - c)",
+                options: ["ac - 2ab - bc", "ac - 2ab + bc", "ac + 2ab + bc", "ac + bc"],
+                correct: 1
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 57,
+                text: "Calculate the Average of 1,2,3,4,5.",
+                options: ["1", "2", "3", "4"],
+                correct: 2
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 58,
+                text: "Plane geometry",
+                options: ["has only two dimensions.", "manipulates cubes and spheres.", "cannot be represented on the page.", "is ordinary."],
+                correct: 0
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 59,
+                text: "A single location in space is called a",
+                options: ["Line", "Point", "Plane", "Ray"],
+                correct: 1
+            },
+            {
+                section: "Quantitative Reasoning",
+                number: 60,
+                text: "A single point",
+                options: ["has width.", "can be accurately drawn.", "can exist at multiple planes", "makes a line."],
+                correct: 2
+            },
+
+            // Physics (61-70)
+            {
+                section: "Physics",
+                number: 61,
+                text: "The dimensional formula ML²T⁻² represents",
+                options: ["The moment of a force", "acceleration", "Force", "Momentum"],
+                correct: 0
+            },
+            {
+                section: "Physics",
+                number: 62,
+                text: "Watt/sec is a unit of",
+                options: ["momentum", "force", "energy", "power"],
+                correct: 2
+            },
+            {
+                section: "Physics",
+                number: 63,
+                text: "A fixed pulley is employed to",
+                options: ["do more work with the same force but without using pulley", "change the direction of force", "same work", "have mechanical advantage greater than one"],
+                correct: 1
+            },
+            {
+                section: "Physics",
+                number: 64,
+                text: "The force of friction that comes into action after the motion has started is known as",
+                options: ["dynamic friction", "static friction", "friction only", "limiting friction"],
+                correct: 0
+            },
+            {
+                section: "Physics",
+                number: 65,
+                text: "Let a disc, a cylinder, a solid sphere, and a ring be rolled down in an inclined plane simultaneously. Which will reach first?",
+                options: ["disc", "cylinder", "solid sphere", "ring"],
+                correct: 2
+            },
+            {
+                section: "Physics",
+                number: 66,
+                text: "Forces of 3N, 4N and 12N act at a point in mutually perpendicular direction. The magnitude of the resultant force in newton is",
+                options: ["13", "11", "5", "indeterminate from the information given"],
+                correct: 0
+            },
+            {
+                section: "Physics",
+                number: 67,
+                text: "Which of the following is not necessary for work to be done?",
+                options: ["an applied force", "a force component along the displacement", "a displacement", "a constant speed"],
+                correct: 3
+            },
+            {
+                section: "Physics",
+                number: 68,
+                text: "A body at rest may have",
+                options: ["speed", "momentum", "velocity", "energy"],
+                correct: 3
+            },
+            {
+                section: "Physics",
+                number: 69,
+                text: "We know that forces are vectors because",
+                options: ["they obey the same mathematical rules that displacement obey", "they are defined in such a way that they are vectors", "they always add to zero", "they have magnitude"],
+                correct: 0
+            },
+            {
+                section: "Physics",
+                number: 70,
+                text: "A car accelerates for 10s at 6 m/s². What is its final speed if its initial was 4 m/s?",
+                options: ["34 m/s", "64 m/s", "60 m/s", "30 m/s"],
+                correct: 1
+            },
+
+            // Computer (71-80)
+            {
+                section: "Computer",
+                number: 71,
+                text: "A computer derives its basic strength from",
+                options: ["speed", "accuracy", "memory", "all of the above"],
+                correct: 3
+            },
+            {
+                section: "Computer",
+                number: 72,
+                text: "Modern computers compared to earlier computers are",
+                options: ["faster and larger", "less reliable", "larger and stronger", "slower but more reliable"],
+                correct: 4
+            },
+            {
+                section: "Computer",
+                number: 73,
+                text: "The use of computer for business applications is attractive because of its",
+                options: ["accuracy", "reliability", "speed", "secret code facility"],
+                correct: 4
+            },
+            {
+                section: "Computer",
+                number: 74,
+                text: "A computer is capable of performing almost any task provided, that it can be",
+                options: ["coded", "memorised", "analysed", "reduced to a series of logical steps"],
+                correct: 3
+            },
+            {
+                section: "Computer",
+                number: 75,
+                text: "A BIT represents a",
+                options: ["decimal digit", "octal digit", "binary digit", "hexa decimal digit"],
+                correct: 2
+            },
+            {
+                section: "Computer",
+                number: 76,
+                text: "A company has very high speed, accuracy and reliability. Its intelligence quotient could be of the order of",
+                options: ["100", "0", "50", "200"],
+                correct: 1
+            },
+            {
+                section: "Computer",
+                number: 77,
+                text: "Computer can not do anything without a",
+                options: ["chip", "memory", "output device", "program"],
+                correct: 3
+            },
+            {
+                section: "Computer",
+                number: 78,
+                text: "A computer possesses information",
+                options: ["as directed by the operator", "automatically", "at once", "gradually and eventually"],
+                correct: 0
+            },
+            {
+                section: "Computer",
+                number: 79,
+                text: "Pick up the false statement",
+                options: [
+                    "computer can manipulate both numeric and non-numeric symbols",
+                    "computer errors can usually be traced to faulty programs or inaccurate input data",
+                    "the facts or informational raw materials represented by numeric and non-numeric symbols are called information",
+                    "the space in the primary storage section is divided into four areas: input, working,storage, output and program storage."
+                ],
+                correct: 2
+            },
+            {
+                section: "Computer",
+                number: 80,
+                text: "Processors of all computers, whether micro, mini or mainframe must have",
+                options: ["ALU", "primary storage", "control unit", "all of these"],
+                correct: 3
+            },
+
+            // Mathematics (81-90)
+            {
+                section: "Mathematics",
+                number: 81,
+                text: "0.003 x 0.02 = ?",
+                options: ["0.06", "0.006", "0.0006", "0.00006"],
+                correct: 3
+            },
+            {
+                section: "Mathematics",
+                number: 82,
+                text: "What is the average of the numbers: 0, 0, 4, 10, 5, and 5?",
+                options: ["2", "3", "4", "5"],
+                correct: 2
+            },
+            {
+                section: "Mathematics",
+                number: 83,
+                text: "What is the rate of discount if a bicycle which cost Rs.4,000 is sold for Rs.3,200?",
+                options: ["14%", "16%", "18%", "20%"],
+                correct: 3
+            },
+            {
+                section: "Mathematics",
+                number: 84,
+                text: "|-4| + |4| - 4 + 4 = ?",
+                options: ["0", "2", "4", "8"],
+                correct: 2
+            },
+            {
+                section: "Mathematics",
+                number: 85,
+                text: "What is the value of x in 3x - 15 - 6 = 0 ?",
+                options: ["7", "8", "9", "-9"],
+                correct: 0
+            },
+            {
+                section: "Mathematics",
+                number: 86,
+                text: "What is the area in cm² of the shaded region in the diagram below?",
+                options: ["6", "7", "8", "9"],
+                correct: 1
+            },
+            {
+                section: "Mathematics",
+                number: 87,
+                text: "If A completes a particular work in 8 days and B the same work in 24 days. How many days will it take if they work together?",
+                options: ["4", "5", "6", "7"],
+                correct: 2
+            },
+            {
+                section: "Mathematics",
+                number: 88,
+                text: "What comes next in the sequence: 1, 3, 11, 43, ____?",
+                options: ["161", "171", "181", "191"],
+                correct: 1
+            },
+            {
+                section: "Mathematics",
+                number: 89,
+                text: "What is the distance travelled by a car which travelled at a speed of 80km/hr for 3 hours and 30 minutes?",
+                options: ["275km", "280km", "285km", "290km"],
+                correct: 1
+            },
+            {
+                section: "Mathematics",
+                number: 90,
+                text: "In a class of 40 students 20% are girls. How many boys are there in the class?",
+                options: ["26", "28", "30", "32"],
+                correct: 3
+            }
+        ];
+
+        function startTest() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'block';
+            currentQuestion = 0;
+            userAnswers = {};
+            startTimer();
+            displayQuestion();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitTest();
+                }
+            }, 1000);
+        }
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            let sectionHeader = '';
+            if (currentQuestion === 0 || questions[currentQuestion].section !== questions[currentQuestion - 1]?.section) {
+                sectionHeader = `<div class="section-header">${question.section}</div>`;
+            }
+            
+            container.innerHTML = `
+                ${sectionHeader}
+                <div class="question">
+                    <div class="question-number">Question ${question.number}</div>
+                    <div class="question-text">${question.text}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option ${userAnswers[currentQuestion] === index ? 'selected' : ''}" 
+                                 onclick="selectOption(${index})">
+                                <input type="radio" name="q${currentQuestion}" value="${index}" 
+                                       ${userAnswers[currentQuestion] === index ? 'checked' : ''}>
+                                <label>${String.fromCharCode(97 + index)}) ${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            updateControls();
+            updateProgress();
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            
+            // Update visual selection
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                option.classList.toggle('selected', index === optionIndex);
+                const radio = option.querySelector('input[type="radio"]');
+                radio.checked = index === optionIndex;
+            });
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function updateControls() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const counter = document.getElementById('questionCounter');
+            
+            prevBtn.style.display = currentQuestion === 0 ? 'none' : 'inline-block';
+            nextBtn.style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline-block';
+            submitBtn.style.display = currentQuestion === questions.length - 1 ? 'inline-block' : 'none';
+            
+            counter.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        function submitTest() {
+            clearInterval(timerInterval);
+            
+            // Calculate results
+            let correct = 0;
+            let wrong = 0;
+            let unanswered = 0;
+            
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === undefined) {
+                    unanswered++;
+                } else if (userAnswers[index] === question.correct) {
+                    correct++;
+                } else {
+                    wrong++;
+                }
+            });
+            
+            const totalScore = correct;
+            const percentage = Math.round((correct / questions.length) * 100);
+            
+            // Display results
+            document.getElementById('testScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            document.getElementById('scoreCircle').textContent = `${percentage}%`;
+            document.getElementById('totalScore').textContent = totalScore;
+            document.getElementById('correctAnswers').textContent = correct;
+            document.getElementById('wrongAnswers').textContent = wrong;
+            document.getElementById('unanswered').textContent = unanswered;
+            
+            // Generate answer key
+            generateAnswerKey();
+        }
+
+        function generateAnswerKey() {
+            const sections = {};
+            questions.forEach(question => {
+                if (!sections[question.section]) {
+                    sections[question.section] = [];
+                }
+                sections[question.section].push(question);
+            });
+            
+            let answerKeyHTML = '';
+            Object.keys(sections).forEach(sectionName => {
+                answerKeyHTML += `
+                    <div class="key-section">
+                        <h4>${sectionName}</h4>
+                        <div class="key-grid">
+                            ${sections[sectionName].map(question => {
+                                const questionIndex = questions.indexOf(question);
+                                const userAnswer = userAnswers[questionIndex];
+                                const isCorrect = userAnswer === question.correct;
+                                const isAnswered = userAnswer !== undefined;
+                                
+                                let className = '';
+                                if (!isAnswered) {
+                                    className = '';
+                                } else if (isCorrect) {
+                                    className = 'correct';
+                                } else {
+                                    className = 'incorrect';
+                                }
+                                
+                                return `
+                                    <div class="key-item ${className}">
+                                        <strong>Q${question.number}</strong><br>
+                                        Correct: ${String.fromCharCode(97 + question.correct)}<br>
+                                        ${isAnswered ? `Your: ${String.fromCharCode(97 + userAnswer)}` : 'Not answered'}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('answerKeyContent').innerHTML = answerKeyHTML;
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            userAnswers = {};
+            timeLeft = 7200;
+            clearInterval(timerInterval);
+            
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
+
+        // Initialize the test
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show start screen by default
+        });
+    </script>
+</body>
+</html>
